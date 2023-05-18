@@ -4,14 +4,16 @@ import os
 
 import requests
 
-
+token = os.getenv("TOKEN")
+Authorization = ""
+print(token)
 def get_goods_info():
     cookies = {
         '_ga':                                      'GA1.1.66989966.1682040245',
         'Hm_lvt_87f2ef1ac0ed9d4bc756544ab4ada75e':  '1682040245,1684226944',
         'Hm_lpvt_87f2ef1ac0ed9d4bc756544ab4ada75e': '1684226944',
         'CMM_A_C_ID':                               '82d959d2-f3c6-11ed-be8b-167879f8c795',
-        'LOGIN-TOKEN-FORSNS-CX':                    'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhcHBpZCI6IjEwMDA5IiwiZXhwIjoxNjg1MDY0ODE1LCJpYXQiOjE2ODI0NzI4MTUsImlkIjo5MzA3MDIxNH0.Mr76t0tlvjJ58XZsxI7sH44bHGvg9hVoESSuEsdLdjs',
+        'LOGIN-TOKEN-FORSNS-CX':                    token,
         '_ga_BBZXS8H6XZ':                           'GS1.1.1684226945.9.1.1684226986.0.0.0',
     }
 
@@ -19,15 +21,13 @@ def get_goods_info():
         'Accept':             'application/json, text/plain, */*',
         'Accept-Language':    'zh-CN,zh;q=0.9,en;q=0.8,en-GB;q=0.7,en-US;q=0.6',
         'Connection':         'keep-alive',
-        # Requests sorts cookies= alphabetically
-        # 'Cookie': '_ga=GA1.1.66989966.1682040245; Hm_lvt_87f2ef1ac0ed9d4bc756544ab4ada75e=1682040245,1684226944; Hm_lpvt_87f2ef1ac0ed9d4bc756544ab4ada75e=1684226944; CMM_A_C_ID=82d959d2-f3c6-11ed-be8b-167879f8c795; LOGIN-TOKEN-FORSNS-CX=Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhcHBpZCI6IjEwMDA5IiwiZXhwIjoxNjg1MDY0ODE1LCJpYXQiOjE2ODI0NzI4MTUsImlkIjo5MzA3MDIxNH0.Mr76t0tlvjJ58XZsxI7sH44bHGvg9hVoESSuEsdLdjs; _ga_BBZXS8H6XZ=GS1.1.1684226945.9.1.1684226986.0.0.0',
         'Origin':             'https://www.chanxuan.com',
         'Referer':            'https://www.chanxuan.com/',
         'Sec-Fetch-Dest':     'empty',
         'Sec-Fetch-Mode':     'cors',
         'Sec-Fetch-Site':     'same-site',
         'User-Agent':         'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/113.0.0.0 Safari/537.36 Edg/113.0.1774.42',
-        'X-Authorization-Cx': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhcHBpZCI6IjEwMDA5IiwiZXhwIjoxNjg1MDY0ODE1LCJpYXQiOjE2ODI0NzI4MTUsImlkIjo5MzA3MDIxNH0.Mr76t0tlvjJ58XZsxI7sH44bHGvg9hVoESSuEsdLdjs',
+        'X-Authorization-Cx': Authorization,
         'X-Client-Id':        '170779814',
         'sec-ch-ua':          '"Microsoft Edge";v="113", "Chromium";v="113", "Not-A.Brand";v="24"',
         'sec-ch-ua-mobile':   '?0',
@@ -36,26 +36,26 @@ def get_goods_info():
     }
 
     params = {
-        'request_id':            '00f7543247779ad409c5f7f5cac1bcfe',
+        'request_id':            'a1016e80ea8eafb8cd6a627543860d07',
         'sort_column':           'base_score',
         'day_type':              '2',
         'order_by':              'desc',
-        'search_str':            '',
-        'cos_ratio':             '20-',
+        'search_str':            '便携',  # 搜索关键词
+        'cos_ratio':             '30-',
         'free_sample_condition': '0',
         'service_guarantee':     '0',
-        'shop_score':            '',
+        'shop_score':            '0',
         'volume':                '',
         'shareable':             '1',
-        'pv_count':              '2000-',
+        'pv_count':              '1000-',
         'author_count':          '',
-        'activity_price':        '5-50',
+        'activity_price':        '10-100',
         'has_video':             '1',
         'has_live':              '1',
         'banner_id':             '',
         'is_free_sample':        '0',
-        'cmm_cid':               '19',
-        'cmm_cid_snd':           '198',
+        'cmm_cid':               '',  # 分类ID 19:日常家居
+        'cmm_cid_snd':           '0',
         'cmm_cid_third':         '0',
         'cmm_cid_fourth':        '0',
         'cmm_cid_fifth':         '0',
@@ -65,7 +65,7 @@ def get_goods_info():
         'is_assured':            '0',
         'has_shop_brand_tag':    '0',
         'page':                  '1',
-        'size':                  '1000',
+        'size':                  '300',
         'total_page':            '0',
     }
 
