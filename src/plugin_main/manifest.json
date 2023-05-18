@@ -1,0 +1,20 @@
+{
+  "manifest_version": 2,
+  "name": "My Extension",
+  "version": "1.0",
+  "description": "My first extension",
+  "icons": {
+    "16": "cat.png",
+    "48": "cat.png",
+    "128": "cat.png"
+  },
+  "page_action": {
+    "default_title": "My Extension",
+    "default_icon": "cat.png",
+    "default_popup": "popup.html"
+  },
+  "background": {
+    "scripts": ["server.js"],
+    "persistent": false
+  }
+}

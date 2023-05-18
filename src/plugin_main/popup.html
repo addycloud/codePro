@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Chat App</title>
+    <style>
+        /* Add your CSS styles here */
+        #chat {
+            border: 1px solid #ccc;
+            height: 400px;
+            overflow-y: scroll;
+            padding: 10px;
+        }
+        .message {
+            margin-bottom: 10px;
+        }
+        .message .sender {
+            font-weight: bold;
+            color: blue;
+        }
+        .message .time {
+            font-size: 12px;
+            color: #ccc;
+        }
+    </style>
+</head>
+<body>
+    <div id="chat">
+        <!-- Messages will be displayed here -->
+    </div>
+    <form id="message-form">
+        <input type="text" id="message-input" placeholder="Type your message...">
+        <button type="submit">Send</button>
+    </form>
+    <script>
+        const websocket = new WebSocket('ws://localhost:8080');
+
+        const chat = document.getElementById('chat');
+        const messageForm = document.getElementById('message-form');
+        const messageInput = document.getElementById('message-input');
+
+        websocket.addEventListener('message', (event) => {
+            const data = JSON.parse(event.data);
+            displayMessage(data);
+        });
+
+        function displayMessage(message) {
+            const div = document.createElement('div');
+            div.classList.add('message');
+            div.innerHTML = `
+                <span class="sender">${message.sender}</span>
+                <span class="time">${message.time}</span>
+                <p>${message.text}</p>
+            `;
+            chat.appendChild(div);
+            chat.scrollTop = chat.scrollHeight;
+            // repeat the message
+            const data = {
+                sender: 'Bot',
+                time: new Date().toLocaleTimeString(),
+                text: message.text
+            };
+            websocket.send(JSON.stringify(data));
+            displayMessage(data);
+        }
+
+        messageForm.addEventListener('submit', (event) => {
+            event.preventDefault();
+            const message = messageInput.value.trim();
+            if (message) {
+                const data = {
+                    sender: 'You',
+                    time: new Date().toLocaleTimeString(),
+                    text: message
+                };
+                websocket.send(JSON.stringify(data));
+                displayMessage(data);
+                messageInput.value = '';
+            }
+        });
+
+        // Handle received messages from the server
+        websocket.addEventListener('message', (event) => {
+            const message = JSON.parse(event.data);
+            console.log('Received message from server:', message);
+            // Do something with the received message
+        });
+    </script>
+</body>
+</html>
