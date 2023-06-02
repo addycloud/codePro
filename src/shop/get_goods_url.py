@@ -36,15 +36,15 @@ def get_goods_info():
     }
 
     params = {
-        'request_id':            'a1016e80ea8eafb8cd6a627543860d07',
+        'request_id':            '8ddefdfbfb1dd794ebe91fe0c88d8bc3',
         'sort_column':           'base_score',
         'day_type':              '2',
         'order_by':              'desc',
-        'search_str':            '便携',  # 搜索关键词
+        'search_str':            '防晒',
         'cos_ratio':             '30-',
         'free_sample_condition': '0',
         'service_guarantee':     '0',
-        'shop_score':            '0',
+        'shop_score':            '4.8-',
         'volume':                '',
         'shareable':             '1',
         'pv_count':              '1000-',
