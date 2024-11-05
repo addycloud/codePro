@@ -3,7 +3,7 @@
 
 
 class Solution:
-    def lengthOfLongestSubstring(self, s: str) -> int:
+    def lengthOfLongestSubstring(self, s: str) -> tuple:
         max_len, hashmap = 0, {}
         start = 0
         longest_substring = ""
@@ -19,6 +19,11 @@ class Solution:
                 if hashmap[head] == 0:
                     del hashmap[head]
                 start += 1
+
+            print(f"end:{end}, s[end]:{s[end]}, hashmap[s[end]]:{hashmap[s[end]]}, len(hashmap): {len(hashmap)}, "
+                  f"start: {start}, s[start]: {s[start]}, max_len: {max_len}, longest_substring: {longest_substring}, "
+                  f"hashmap: {hashmap}"
+                  f"")
         return max_len, longest_substring
 
 if __name__ == '__main__':
