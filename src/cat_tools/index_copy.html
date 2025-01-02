@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <title>触目PDF文件搜索</title>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="search-form">
+        <form method="post" enctype="application/x-www-form-urlencoded">
+            <label>
+                <input type="text" name="keyWord" placeholder="输入关键词搜索PDF文件">
+            </label>
+            <input type="submit" value="搜索">
+        </form>
+    </div>
+    <div id="loading">
+        <img src="https://i.stack.imgur.com/FhHRx.gif" alt="loading">
+    </div>
+    <div id="result">
+        <table>
+            <thead>
+                <tr>
+                    <th>文件名</th>
+                    <th>描述</th>
+                    <th>链接</th>
+                </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>

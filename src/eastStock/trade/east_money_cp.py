@@ -7,8 +7,8 @@ import requests
 import json
 import os
 import base64
-
-from src.eastStock import dlog, rsa_encrypt
+from Crypto.PublicKey import RSA
+from Crypto.Cipher import PKCS1_v1_5 as Cipher_pkcs1_v1_5
 
 """
 get_asserts https://jywg.18.cn/Com/queryAssetAndPositionV1?validatekey=${validatekey}   我的资产
@@ -25,28 +25,23 @@ submit_bat_trade_v2 https://jywg.18.cn/Trade/SubmitBatTradeV2?validatekey=${vali
 """
 
 
-def _ocr(filename):
-    # https://market.aliyun.com/products/57124001/cmapi027426.html#sku=yuncode2142600000
-    appcode = ''
-    with open(filename, 'rb') as f:
-        base64_data = base64.b64encode(f.read())
-        headers = {
-            'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) '
-                          'Chrome/48.0.2564.109 Safari/537.36',
-            'Authorization': 'APPCODE ' + appcode}
-        params = {"image": base64_data, "type": "1003"}
+def dlog(*s):
+    template = '{}'
+    for arg in s:
+        template = template + ' {}'
 
-        r = requests.post('https://302307.market.alicloudapi.com/ocr/captcha', data=params, headers=headers)
-        dlog(r)
-        j = r.json()
-        dlog(j)
-        return j['data']['captcha']
+    print(template.format(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()), *s))
+    return
 
 
-def revoke():
-    # https://jywg.18.cn/Trade/RevokeOrders?validatekey='+self.validateKey
-    params = {'revokes': '20220212_委托编号'}
-    return params
+def rsa_encrypt(msg):
+    public_key = '''-----BEGIN PUBLIC KEY-----
+MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDHdsyxT66pDG4p73yope7jxA92\nc0AT4qIJ/xtbBcHkFPK77upnsfDTJiVEuQDH+MiMeb+XhCLNKZGp0yaUU6GlxZdp\n+nLW8b7Kmijr3iepaDhcbVTsYBWchaWUXauj9Lrhz58/6AE/NF0aMolxIGpsi+ST\n2hSHPu3GSXMdhPCkWQIDAQAB
+-----END PUBLIC KEY-----'''
+    pub_obj = RSA.importKey(public_key)
+    cipher = Cipher_pkcs1_v1_5.new(pub_obj)
+    msg = cipher.encrypt(msg.encode())
+    return base64.b64encode(msg).decode("utf-8")
 
 
 class EastMoneyClient:
@@ -55,11 +50,11 @@ class EastMoneyClient:
                       'Chrome/48.0.2564.109 Safari/537.36'
     }
 
-    def __init__(self, _account_id, password, is_ocr=False):
-        self.accountId = _account_id
+    def __init__(self, accountId, password, isOcr=False):
+        self.accountId = accountId
         self.password = password
         self.session = requests.Session()
-        self.isOcr = is_ocr
+        self.isOcr = isOcr
 
         self.__loadCookie()
 
@@ -77,6 +72,23 @@ class EastMoneyClient:
             with open(key_path, 'r') as f:
                 self.validateKey = f.read()
 
+    def __ocr(self, filename):
+        # https://market.aliyun.com/products/57124001/cmapi027426.html#sku=yuncode2142600000
+        appcode = ''
+        with open(filename, 'rb') as f:
+            base64_data = base64.b64encode(f.read())
+            headers = {
+                'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) '
+                              'Chrome/48.0.2564.109 Safari/537.36',
+                'Authorization': 'APPCODE ' + appcode}
+            params = {"image": base64_data, "type": "1003"}
+
+            r = requests.post('https://302307.market.alicloudapi.com/ocr/captcha', data=params, headers=headers)
+            dlog(r)
+            j = r.json()
+            dlog(j)
+            return j['data']['captcha']
+
     def login(self):
         times = 0
         while times < 3:
@@ -88,7 +100,7 @@ class EastMoneyClient:
                 f.write(content)
 
             if self.isOcr:
-                identifycode = _ocr('yzm.png')
+                identifycode = self.__ocr('yzm.png')
             else:
                 identifycode = input('yzm.png, input captcha: ')
             params = {
@@ -165,17 +177,15 @@ class EastMoneyClient:
                               headers=self.headers)
         return r.text
 
+    def revoke(self):
+        # https://jywg.18.cn/Trade/RevokeOrders?validatekey='+self.validateKey
+        params = {'revokes': '20220212_委托编号'}
+        return
 
-def get_client(_account_id, _password, _is_ocr=False):
+
+def get_client(accountId, _password, isOcr=False):
     # if len(password) <= 20:
     password = rsa_encrypt(_password)
-    client = EastMoneyClient(_account_id, password, _is_ocr)
+    client = EastMoneyClient(accountId, password, isOcr)
     print("====client:{}".format(client))
     return client
-
-
-if __name__ == '__main__':
-    import sys
-
-    print("Python 版本：", sys.version)
-    print("Python 解释器路径：", sys.executable)

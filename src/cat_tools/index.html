@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <title>触目PDF文件搜索</title>
+    <meta charset="utf-8">
+    <script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <style>
+        body {
+            font-family: "Microsoft YaHei", Arial, sans-serif;
+        }
+
+        #search-form {
+            margin: 50px auto;
+            text-align: center;
+        }
+
+        #search-form input[type="text"] {
+            width: 60%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            outline: none;
+            font-size: 16px;
+            transition: box-shadow 0.3s;
+        }
+
+        #search-form input[type="text"]:focus {
+            box-shadow: 0 0 5px #ccc;
+        }
+
+        #search-form input[type="submit"] {
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        #search-form input[type="submit"]:hover {
+            background-color: #0069d9;
+        }
+
+        #result {
+            margin: 50px auto;
+            width: 60%;
+            text-align: center;
+        }
+
+        #result table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        #result th,
+        #result td {
+            border: 1px solid #ccc;
+            padding: 10px;
+        }
+
+        #result th {
+            background-color: #f2f2f2;
+        }
+
+        #result td a {
+            color: #007bff;
+            text-decoration: none;
+        }
+
+        #result td a:hover {
+            text-decoration: underline;
+        }
+
+        #loading {
+            text-align: center;
+            display: none;
+        }
+
+        #loading img {
+            width: 50px;
+            height: 50px;
+            margin-top: 50px;
+        }
+    </style>
+</head>
+<body>
+    <div id="search-form" name="search-form">
+        <form method="post" enctype="application/x-www-form-urlencoded">
+            <label>
+                <input type="text" name="keyWord" placeholder="输入关键词搜索PDF文件">
+            </label>
+            <button type="submit">Search</button>
+        </form>
+    </div>
+    <div id="loading">
+        <img src="https://i.stack.imgur.com/FhHRx.gif" alt="loading">
+    </div>
+    <div id="result">
+        <table>
+            <thead>
+                <tr>
+                    <th>文件名</th>
+                    <th>描述</th>
+                    <th>链接</th>
+                </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+    </div>
+    <script>
+        $(function() {
+            $('#search-form').submit(function (event) {
+                event.preventDefault();
+                var keyWord = document.getElementsByName('keyWord')[0].value;
+                console.log("keyWord====", keyWord);
+
+
+                $('#loading').show();
+                $('#result tbody').empty();
+                axios.post('/search', {
+                    json: {"keyWord": keyWord},
+                  headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded' // 设置请求头
+                  }
+                })
+                .then(function(response) {
+                  $('#loading').hide();
+                  var data = response.data.msg;
+                  console.log('result====', response);
+                  for (var i = 0; i < data.length; i++) {
+                    var row = '<tr>' +
+                      '<td>' + data[i].title + '</td>' +
+                      '<td>' + data[i].des + '</td>' +
+                      '<td><a href="' + data[i].link + '">查看/下载</a></td>' +
+                      '</tr>';
+                    $('#result tbody').append(row);
+                  }
+                })
+                .catch(function(error) {
+                  $('#loading').hide();
+                  console.log('搜索失败：', error);
+                  alert('搜索失败，请重试！');
+                });
+            });
+        });
+    </script>
+</body>
+</html>
